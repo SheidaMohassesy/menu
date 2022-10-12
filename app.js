@@ -1,3 +1,6 @@
+// get only unique categories
+// integrate over categories return buttons
+// make sure to select buttons when they are available
 const menu = [
   {
     id: 1,
@@ -71,21 +74,26 @@ const menu = [
     img: "./images/item-9.jpeg",
     desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
   },
+  {
+    id: 10,
+    title: "steak dinner",
+    category: "dinner",
+    price: 39.99,
+    img: "./images/item-10.jpeg",
+    desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
+  },
 ];
 
 const sectionCenter = document.querySelector(".section-center");
-const filterButtons = document.querySelectorAll(".filter-btn");
+const container = document.querySelector(".btn-container")
 
-
+//load items
 window.addEventListener("DOMContentLoaded", () => {
   displayMenuItems(menu);
-});
-
-filterButtons.forEach( (item) => {
-  item.addEventListener("click", (e) => {
-    console.log(e.currentTarget.dataset);
+  displayMenuButtons();
   });
-});
+  
+
 
 displayMenuItems = (menuItems) => {
   let displayMenu = menuItems.map((item) => {
@@ -103,4 +111,55 @@ displayMenuItems = (menuItems) => {
   });
   const stringDisplayMenu = displayMenu.join("");
   sectionCenter.innerHTML = stringDisplayMenu;
+};
+
+displayMenuButtons = () => {
+  const categories = menu.reduce((values, item) => {
+    if(!values.includes(item.category)) {
+      values.push(item.category);
+    }
+        return values;
+      }, ["all"]);
+
+
+      // create buttons by string interpolation
+      // const categoryButtons = categories.map((category) => {
+      //   return `<button class="filter-btn" type="button" data-id=${category}>
+      //   ${category}
+      //   </button>
+      //   `
+      // }).join("");
+      // container.innerHTML = categoryButtons;
+
+
+      // create buttons by strog type object creation
+      categories.forEach((category) => {
+        const button = document.createElement("button");
+        button.classList = 'filter-btn';
+        button.dataset.id = category;
+        button.innerText = category;
+        container.appendChild(button);
+      });
+
+
+      const filterButtons = document.querySelectorAll(".filter-btn");
+      //filter items
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const category = e.currentTarget.dataset.id;
+        const menuCategory = menu.filter((menuItem) => {
+          // console.log(menuItem.category);
+          if(menuItem.category === category){
+            return menuItem;
+          }
+        });
+        // console.log(menuCategory);
+        if(category === "all") {
+          displayMenuItems(menu);
+        }
+        else {
+          displayMenuItems(menuCategory);
+        }
+      });
+    });
 };
